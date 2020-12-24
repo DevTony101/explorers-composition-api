@@ -8,6 +8,7 @@
   import WelcomeScreen from "./components/WelcomeScreen.vue";
   import WireGame from "./components/WireGame.vue";
   import { launchConfetti } from "./utils/canvasConfetti";
+  import { reactive, toRefs, computed, watch } from "vue";
 
   export default {
     components: {
@@ -20,8 +21,8 @@
       WelcomeScreen,
       WireGame,
     },
-    data() {
-      return {
+    setup() {
+      const state = reactive({
         activeScreen: "Not Started",
         miniGames: [
           {
@@ -40,51 +41,56 @@
             complete: false,
           },
         ],
+        gameComplete: computed(() => {
+          return state.miniGames.reduce(
+            (accumulator, currentValue) => accumulator && currentValue.complete,
+            true
+          );
+        }),
+        taskProgress: computed(() => {
+          let completedTasks = 0;
+
+          state.miniGames.forEach(miniGame => {
+            if (miniGame.complete) {
+              completedTasks += 1;
+            }
+          });
+
+          return Math.floor((completedTasks / 3) * 100);
+        }),
+      });
+
+      const methods = {
+        registerSelection: gameId => {
+          state.activeScreen = gameId;
+        },
+        restartGame: () => {
+          state.miniGames.forEach(miniGame => {
+            miniGame.complete = false;
+          });
+          state.activeScreen = "Not Started";
+        },
+        startGame: () => (state.activeScreen = "Home"),
+      };
+
+      watch(
+        () => state.activeScreen,
+        currentScreen => {
+          if (currentScreen === "Home" && state.gameComplete) {
+            launchConfetti();
+          }
+        }
+      );
+
+      return {
+        ...toRefs(state),
+        ...methods,
       };
     },
-    computed: {
-      gameComplete() {
-        return this.miniGames.reduce(
-          (accumulator, currentValue) => accumulator && currentValue.complete,
-          true
-        );
-      },
-      taskProgress() {
-        let completedTasks = 0;
-
-        this.miniGames.forEach(miniGame => {
-          if (miniGame.complete) {
-            completedTasks += 1;
-          }
-        });
-
-        return Math.floor((completedTasks / 3) * 100);
-      },
-    },
     methods: {
-      registerSelection(gameId) {
-        this.activeScreen = gameId;
-      },
-      restartGame() {
-        this.miniGames.forEach(miniGame => {
-          miniGame.complete = false;
-        });
-
-        this.activeScreen = "Not Started";
-      },
-      startGame() {
-        this.activeScreen = "Home";
-      },
       /**
        * TODO: Technicians can't get to the other tasks!
        */
-    },
-    watch: {
-      activeScreen(screen) {
-        if (screen === "Home" && this.gameComplete) {
-          launchConfetti();
-        }
-      },
     },
   };
 </script>
