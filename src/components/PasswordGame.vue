@@ -1,54 +1,62 @@
 <script>
   import { PASSWORD_STATUS } from "../constants";
+  import { reactive, toRefs, computed, watch, onMounted } from "vue";
 
   export default {
-    data() {
-      return {
+    setup(props, { emit }) {
+      const state = reactive({
         status: "In Progress",
         passwordInput: "",
         correctPassword: 0,
-      };
-    },
-    computed: {
-      gameStatus() {
-        if (this.status === PASSWORD_STATUS.FAIL) {
-          return {
-            styles: "is-red",
-            text: "Access Denied",
-          };
-        } else if (this.status === PASSWORD_STATUS.PASS) {
-          return {
-            styles: "is-green",
-            text: "Access Granted",
-          };
-        } else {
-          return {
-            styles: "",
-            text: "Locked",
-          };
-        }
-      },
-      userWins() {
-        return this.status === PASSWORD_STATUS.PASS;
-      },
-    },
-    methods: {
-      /**
-       * Todo: Check password is broken!
-       */
-      generateNewPassword() {
+        gameStatus: computed(() => {
+          let styles = "";
+          let text = "Locked";
+          if (state.status === PASSWORD_STATUS.FAIL) {
+            styles = "is-red";
+            text = "Access Denied";
+          } else if (state.status === PASSWORD_STATUS.PASS) {
+            styles = "is-green";
+            text = "Access Granted";
+          }
+
+          return { styles, text };
+        }),
+        userWins: computed(() => state.status === PASSWORD_STATUS.PASS),
+      });
+
+      const generateNewPassword = () => {
         return Math.floor(Math.random() * 1000000 + 1000).toString();
-      },
-    },
-    mounted() {
-      this.correctPassword = this.generateNewPassword();
-    },
-    watch: {
-      status(gameState) {
-        if (gameState === PASSWORD_STATUS.FAIL) {
-          this.correctPassword = this.generateNewPassword();
+      };
+
+      onMounted(() => {
+        state.correctPassword = generateNewPassword();
+      });
+
+      const methods = {
+        checkPassword: () => {
+          if (state.correctPassword === state.passwordInput) {
+            state.status = PASSWORD_STATUS.PASS;
+            emit("mini-game-won", "password-game");
+          } else {
+            state.status = PASSWORD_STATUS.FAIL;
+          }
+        },
+      };
+
+      watch(
+        () => state.gameState,
+        currentGameState => {
+          if (currentGameState === PASSWORD_STATUS.FAIL) {
+            state.correctPassword = generateNewPassword();
+          }
         }
-      },
+      );
+
+      return {
+        ...toRefs(state),
+        ...methods,
+        generateNewPassword,
+      };
     },
   };
 </script>
