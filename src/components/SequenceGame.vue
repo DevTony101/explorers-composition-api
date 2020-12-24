@@ -1,64 +1,64 @@
 <script>
-import shuffle from 'lodash/shuffle'
+  import shuffle from "lodash/shuffle";
 
-export default {
-  data() {
-    return {
-      gameStatus: 'In Progress',
-      userSequence: [],
-      displayValidation: false,
-      colorOptions: [{ label: 'red' }, { label: 'blue' }, { label: 'green' }]
-    }
-  },
-  computed: {
-    correctSequence() {
-      return shuffle(['blue', 'green', 'red'])
+  export default {
+    data() {
+      return {
+        gameStatus: "In Progress",
+        userSequence: [],
+        displayValidation: false,
+        colorOptions: [{ label: "red" }, { label: "blue" }, { label: "green" }],
+      };
     },
-    displaySequence() {
-      let defaultColors = [
-        { label: 'black' },
-        { label: 'black' },
-        { label: 'black' }
-      ]
+    computed: {
+      correctSequence() {
+        return shuffle(["blue", "green", "red"]);
+      },
+      displaySequence() {
+        let defaultColors = [
+          { label: "black" },
+          { label: "black" },
+          { label: "black" },
+        ];
 
-      this.userSequence.forEach((item, index) => {
-        defaultColors[index] = item
-      })
+        this.userSequence.forEach((item, index) => {
+          defaultColors[index] = item;
+        });
 
-      return defaultColors
-    },
-    userWins() {
-      if (this.userSequence && this.userSequence.length === 3) {
-        return this.userSequence.reduce((accumulator, currentValue) => {
-          return accumulator && currentValue.matched
-        }, true)
-      } else {
-        return false
-      }
-    }
-  },
-  methods: {
-    addColorToSequence(color) {
-      this.userSequence.push({
-        ...color,
-        matched: false
-      })
-    }
-    /**
-     * TODO: Check color sequence is gone! Help!
-     */
-  },
-  watch: {
-    userSequence: {
-      handler(currentValue) {
-        if (currentValue.length === 3) {
-          this.checkColorSequence()
+        return defaultColors;
+      },
+      userWins() {
+        if (this.userSequence && this.userSequence.length === 3) {
+          return this.userSequence.reduce((accumulator, currentValue) => {
+            return accumulator && currentValue.matched;
+          }, true);
+        } else {
+          return false;
         }
       },
-      deep: true
-    }
-  }
-}
+    },
+    methods: {
+      addColorToSequence(color) {
+        this.userSequence.push({
+          ...color,
+          matched: false,
+        });
+      },
+      /**
+       * TODO: Check color sequence is gone! Help!
+       */
+    },
+    watch: {
+      userSequence: {
+        handler(currentValue) {
+          if (currentValue.length === 3) {
+            this.checkColorSequence();
+          }
+        },
+        deep: true,
+      },
+    },
+  };
 </script>
 
 <template>
@@ -74,7 +74,7 @@ export default {
           :class="userWins ? '' : 'is-off'"
         />
         <span class="sequence-game-status-text"
-          >{{ userWins ? 'Correct' : 'Mystery' }} Sequence</span
+          >{{ userWins ? "Correct" : "Mystery" }} Sequence</span
         >
       </p>
       <div class="color-swatch-wrapper">
@@ -89,7 +89,7 @@ export default {
             :class="color.matched ? '' : 'is-empty'"
           ></i>
           <span class="color-swatch-text">
-            {{ color.label === 'black' ? 'black' : color.label }}
+            {{ color.label === "black" ? "black" : color.label }}
           </span>
         </div>
       </div>
@@ -112,61 +112,61 @@ export default {
 </template>
 
 <style>
-.color-swatch-heart {
-  margin: 0;
-  margin-bottom: 15px;
-}
+  .color-swatch-heart {
+    margin: 0;
+    margin-bottom: 15px;
+  }
 
-.color-swatch-text {
-  margin-top: 15px;
-}
+  .color-swatch-text {
+    margin-top: 15px;
+  }
 
-.color-swatch-wrapper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 10px;
-  margin-bottom: 30px;
-}
+  .color-swatch-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 10px;
+    margin-bottom: 30px;
+  }
 
-.color-swatch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border: 3px solid white;
-  color: white;
-  font-weight: bold;
-}
+  .color-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border: 3px solid white;
+    color: white;
+    font-weight: bold;
+  }
 
-.sequence-game-description.sequence-game-description {
-  text-align: left;
-  font-size: 1rem;
-}
+  .sequence-game-description.sequence-game-description {
+    text-align: left;
+    font-size: 1rem;
+  }
 
-.sequence-game-status {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  color: #ccc;
-  border: 5px dashed #ccc;
-}
+  .sequence-game-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    color: #ccc;
+    border: 5px dashed #ccc;
+  }
 
-.sequence-game-status.is-green {
-  border-color: var(--green);
-}
+  .sequence-game-status.is-green {
+    border-color: var(--green);
+  }
 
-.sequence-game-status .nes-icon.trophy.is-off {
-  filter: grayscale(1);
-}
+  .sequence-game-status .nes-icon.trophy.is-off {
+    filter: grayscale(1);
+  }
 
-.sequence-game-status-text {
-  margin-left: 10px;
-}
+  .sequence-game-status-text {
+    margin-left: 10px;
+  }
 
-.sequence-directions {
-  font-size: 1.5rem;
-}
+  .sequence-directions {
+    font-size: 1.5rem;
+  }
 </style>

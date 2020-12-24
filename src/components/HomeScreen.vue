@@ -1,22 +1,22 @@
 <script>
-export default {
-  props: {
-    taskProgress: {
-      type: Number,
-      required: true
+  export default {
+    props: {
+      taskProgress: {
+        type: Number,
+        required: true,
+      },
+      miniGames: {
+        type: Array,
+        required: true,
+      },
     },
-    miniGames: {
-      type: Array,
-      required: true
-    }
-  },
-  emits: ['register-selection'],
-  methods: {
-    registerSelection(id) {
-      this.$emit('register-selection', id)
-    }
-  }
-}
+    emits: ["register-selection"],
+    methods: {
+      registerSelection(id) {
+        this.$emit("register-selection", id);
+      },
+    },
+  };
 </script>
 
 <template>
@@ -47,29 +47,29 @@ export default {
 </template>
 
 <style>
-.task-list {
-  list-style: none;
-  display: grid;
-  margin: 0;
-  padding: 0;
-}
-
-.task-item-star.task-item-star {
-  margin-right: 32px;
-  margin-bottom: 50px;
-  transform: scale(3);
-}
-
-@media screen and (min-width: 787px) {
   .task-list {
-    grid-template-columns: repeat(3, 1fr);
-    grid-column-gap: 30px;
+    list-style: none;
+    display: grid;
+    margin: 0;
+    padding: 0;
   }
 
   .task-item-star.task-item-star {
-    margin-right: 48px;
-    margin-bottom: 80px;
-    transform: scale(4);
+    margin-right: 32px;
+    margin-bottom: 50px;
+    transform: scale(3);
   }
-}
+
+  @media screen and (min-width: 787px) {
+    .task-list {
+      grid-template-columns: repeat(3, 1fr);
+      grid-column-gap: 30px;
+    }
+
+    .task-item-star.task-item-star {
+      margin-right: 48px;
+      margin-bottom: 80px;
+      transform: scale(4);
+    }
+  }
 </style>
