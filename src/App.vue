@@ -71,6 +71,10 @@
           state.activeScreen = "Not Started";
         },
         startGame: () => (state.activeScreen = "Home"),
+        updateMiniGame: id => {
+          const miniGame = state.miniGames.find(miniGame => miniGame.id === id);
+          miniGame.complete = true;
+        },
       };
 
       watch(
@@ -86,11 +90,6 @@
         ...toRefs(state),
         ...methods,
       };
-    },
-    methods: {
-      /**
-       * TODO: Technicians can't get to the other tasks!
-       */
     },
   };
 </script>
