@@ -24,14 +24,6 @@
         userWins: computed(() => state.status === PASSWORD_STATUS.PASS),
       });
 
-      const generateNewPassword = () => {
-        return Math.floor(Math.random() * 1000000 + 1000).toString();
-      };
-
-      onMounted(() => {
-        state.correctPassword = generateNewPassword();
-      });
-
       const methods = {
         checkPassword: () => {
           if (state.correctPassword === state.passwordInput) {
@@ -41,13 +33,20 @@
             state.status = PASSWORD_STATUS.FAIL;
           }
         },
+        generateNewPassword: () => {
+          return Math.floor(Math.random() * 1000000 + 1000).toString();
+        },
       };
+
+      onMounted(() => {
+        state.correctPassword = methods.generateNewPassword();
+      });
 
       watch(
         () => state.gameState,
         currentGameState => {
           if (currentGameState === PASSWORD_STATUS.FAIL) {
-            state.correctPassword = generateNewPassword();
+            state.correctPassword = methods.generateNewPassword();
           }
         }
       );
@@ -55,7 +54,6 @@
       return {
         ...toRefs(state),
         ...methods,
-        generateNewPassword,
       };
     },
   };
