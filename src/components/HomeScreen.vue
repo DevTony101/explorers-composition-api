@@ -10,12 +10,14 @@
         required: true,
       },
     },
-    emits: ["register-selection"],
-    methods: {
-      registerSelection(id) {
-        this.$emit("register-selection", id);
-      },
+    setup(props, { emit }) {
+      return {
+        registerSelection: id => {
+          emit("register-selection", id);
+        },
+      };
     },
+    emits: ["register-selection"],
   };
 </script>
 
