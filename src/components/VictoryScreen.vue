@@ -1,9 +1,11 @@
 <script>
   export default {
-    methods: {
-      restartGame() {
-        this.$emit("restart-game");
-      },
+    setup(props, { emit }) {
+      return {
+        restartGame: () => {
+          emit("restart-game");
+        },
+      };
     },
   };
 </script>
