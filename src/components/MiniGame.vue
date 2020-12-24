@@ -1,5 +1,6 @@
 <script>
   import startCase from "lodash/startCase";
+  import { reactive, toRefs, computed } from "vue";
 
   export default {
     props: {
@@ -8,17 +9,19 @@
         required: true,
       },
     },
+    setup(props, { emit }) {
+      const state = reactive({
+        gameTitle: computed(() => startCase(props.gameId)),
+      });
+
+      return {
+        ...toRefs(state),
+        returnToHomeScreen: () => {
+          emit("select-screen", "Home");
+        },
+      };
+    },
     emits: ["select-screen"],
-    computed: {
-      gameTitle() {
-        return startCase(this.gameId);
-      },
-    },
-    methods: {
-      returnToHomeScreen() {
-        this.$emit("select-screen", "Home");
-      },
-    },
   };
 </script>
 
