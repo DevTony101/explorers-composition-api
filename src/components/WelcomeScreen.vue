@@ -1,21 +1,25 @@
 <script>
-export default {
-  emits: ['start-game'],
-  data() {
-    return {
-      heroImage: {
-        src: '/images/astronaut-laptop.png',
-        alt: 'Illustration of astronaut on a laptop. Credit to catalystuff'
-      },
-      topic: 'Composition API'
-    }
-  },
-  methods: {
-    startGame() {
-      this.$emit('start-game')
-    }
-  }
-}
+  import { reactive, toRefs } from "vue";
+
+  export default {
+    setup(props, { emit }) {
+      const state = reactive({
+        heroImage: {
+          src: "/images/astronaut-laptop.png",
+          alt: "Illustration of astronaut on a laptop. Credit to catalystuff",
+        },
+        topic: "Composition API",
+      });
+
+      return {
+        ...toRefs(state),
+        startGame: () => {
+          emit("start-game");
+        },
+      };
+    },
+    emits: ["start-game"],
+  };
 </script>
 
 <template>
@@ -46,39 +50,39 @@ export default {
 </template>
 
 <style>
-.welcome-astronaut {
-  max-width: 120px;
-  margin-bottom: 1rem;
-  animation: hovering 3s infinite ease-in-out;
-}
-
-.welcome-primary-cta {
-  padding: 1rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
-
-.je-link {
-  background-color: #42b883;
-  font-size: 0.8rem;
-}
-
-.je-link-wrapper {
-  margin-bottom: 25px;
-}
-
-@media screen and (min-width: 787px) {
-  .je-link {
-    font-size: 1rem;
-  }
-
   .welcome-astronaut {
-    max-width: 100%;
-    margin-bottom: 2rem;
+    max-width: 120px;
+    margin-bottom: 1rem;
+    animation: hovering 3s infinite ease-in-out;
   }
 
   .welcome-primary-cta {
-    font-size: 1.2rem;
+    padding: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
   }
-}
+
+  .je-link {
+    background-color: #42b883;
+    font-size: 0.8rem;
+  }
+
+  .je-link-wrapper {
+    margin-bottom: 25px;
+  }
+
+  @media screen and (min-width: 787px) {
+    .je-link {
+      font-size: 1rem;
+    }
+
+    .welcome-astronaut {
+      max-width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    .welcome-primary-cta {
+      font-size: 1.2rem;
+    }
+  }
 </style>

@@ -1,25 +1,28 @@
 <script>
-import startCase from 'lodash/startCase'
+  import startCase from "lodash/startCase";
+  import { reactive, toRefs, computed } from "vue";
 
-export default {
-  props: {
-    gameId: {
-      type: String,
-      required: true
-    }
-  },
-  emits: ['select-screen'],
-  computed: {
-    gameTitle() {
-      return startCase(this.gameId)
-    }
-  },
-  methods: {
-    returnToHomeScreen() {
-      this.$emit('select-screen', 'Home')
-    }
-  }
-}
+  export default {
+    props: {
+      gameId: {
+        type: String,
+        required: true,
+      },
+    },
+    setup(props, { emit }) {
+      const state = reactive({
+        gameTitle: computed(() => startCase(props.gameId)),
+      });
+
+      return {
+        ...toRefs(state),
+        returnToHomeScreen: () => {
+          emit("select-screen", "Home");
+        },
+      };
+    },
+    emits: ["select-screen"],
+  };
 </script>
 
 <template>
@@ -36,17 +39,17 @@ export default {
 </template>
 
 <style>
-.mini-game {
-  position: relative;
-  padding: 0 2rem;
-}
+  .mini-game {
+    position: relative;
+    padding: 0 2rem;
+  }
 
-.mini-game h1 {
-  font-size: 4rem;
-}
+  .mini-game h1 {
+    font-size: 4rem;
+  }
 
-.mini-game-cta {
-  margin-top: 45px;
-  margin-bottom: 45px;
-}
+  .mini-game-cta {
+    margin-top: 45px;
+    margin-bottom: 45px;
+  }
 </style>

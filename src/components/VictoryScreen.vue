@@ -1,11 +1,13 @@
 <script>
-export default {
-  methods: {
-    restartGame() {
-      this.$emit('restart-game')
-    }
-  }
-}
+  export default {
+    setup(props, { emit }) {
+      return {
+        restartGame: () => {
+          emit("restart-game");
+        },
+      };
+    },
+  };
 </script>
 
 <template>
@@ -41,24 +43,24 @@ export default {
 </template>
 
 <style>
-.victory-cta {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
+  .victory-cta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 
-.victory-cta.is-primary {
-  margin-bottom: 25px;
-}
+  .victory-cta.is-primary {
+    margin-bottom: 25px;
+  }
 
-.victory-cta .nes-icon {
-  margin-right: 40px;
-}
+  .victory-cta .nes-icon {
+    margin-right: 40px;
+  }
 
-.astronaut-rocket {
-  max-width: 100%;
-  margin-bottom: 3rem;
-  animation: hovering 3s infinite ease-in-out;
-}
+  .astronaut-rocket {
+    max-width: 100%;
+    margin-bottom: 3rem;
+    animation: hovering 3s infinite ease-in-out;
+  }
 </style>

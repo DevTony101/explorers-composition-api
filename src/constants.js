@@ -1,20 +1,20 @@
 export const WIRE_OPTIONS = [
   {
-    label: 'red'
+    label: "red",
   },
   {
-    label: 'yellow'
+    label: "yellow",
   },
   {
-    label: 'limegreen'
+    label: "limegreen",
   },
   {
-    label: 'cyan'
-  }
-]
+    label: "cyan",
+  },
+];
 
 export const PASSWORD_STATUS = {
-  NEUTRAL: 'access-locked',
-  FAIL: 'access-denied',
-  PASS: 'access-granted'
-}
+  NEUTRAL: "access-locked",
+  FAIL: "access-denied",
+  PASS: "access-granted",
+};
