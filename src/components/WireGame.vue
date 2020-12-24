@@ -1,10 +1,18 @@
 <script>
   import shuffle from "lodash/shuffle";
   import { WIRE_OPTIONS } from "../constants";
+  import {
+    reactive,
+    toRefs,
+    computed,
+    watch,
+    onMounted,
+    onUnmounted,
+  } from "vue";
 
   export default {
-    data() {
-      return {
+    setup(props, { emit }) {
+      const state = reactive({
         userWires: [],
         matchStatus: [false, false, false, false],
         userSelection: {
@@ -25,77 +33,83 @@
           x: 0,
           y: 0,
         },
-      };
-    },
-    computed: {
-      correctWires() {
-        return shuffle([...this.userWires]);
-      },
-      userWins() {
-        return !this.matchStatus.includes(false);
-      },
-    },
-    watch: {
-      /**
-       * TODO: It can't communicate with the main dashboard!
-       */
-    },
-    mounted() {
-      window.addEventListener("mousemove", this.handleMouseMove);
-      this.userWires = shuffle(WIRE_OPTIONS);
-    },
-    unmounted() {
-      window.removeEventListener("mousemove", this.handleMouseMove);
-    },
-    methods: {
-      handleMouseMove($event) {
-        this.mousePosition.x = $event.x;
-        this.mousePosition.y = $event.y;
-      },
-      checkWireColors() {
-        const { selectedWire, matchedWire } = this.userSelection;
+        correctWires: computed(() => shuffle([...state.userWires])),
+        userWins: computed(() => !state.matchStatus.includes(false)),
+      });
 
-        if (selectedWire === matchedWire) {
-          const selectedIndex = this.userWires.findIndex(
-            wire => wire.label === selectedWire
+      const methods = {
+        handleMouseMove: $event => {
+          state.mousePosition.x = $event.x;
+          state.mousePosition.y = $event.y;
+        },
+        checkWireColors: () => {
+          const { selectedWire, matchedWire } = state.userSelection;
+
+          if (selectedWire === matchedWire) {
+            const selectedIndex = state.userWires.findIndex(
+              wire => wire.label === selectedWire
+            );
+
+            state.matchStatus[selectedIndex] = true;
+            state.wireLines.push({
+              ...state.drawWire,
+              x2: state.mousePosition.x - state.drawWire.offsetLeft,
+              y2: state.mousePosition.y - state.drawWire.offsetTop,
+            });
+          }
+
+          state.drawWire.display = false;
+        },
+        registerMatchColor: wire => {
+          state.userSelection.matchedWire = wire.label;
+        },
+        registerWireColor: ($event, wire) => {
+          state.userSelection.selectedWire = wire.label;
+
+          const wireIndex = state.userWires.findIndex(
+            userWire => userWire === wire
           );
+          const elWireRect = $event.target.getBoundingClientRect();
 
-          this.matchStatus[selectedIndex] = true;
-          this.wireLines.push({
-            ...this.drawWire,
-            x2: this.mousePosition.x - this.drawWire.offsetLeft,
-            y2: this.mousePosition.y - this.drawWire.offsetTop,
-          });
+          state.drawWire = {
+            display: true,
+            label: wire.label,
+            stroke: wire.label,
+            x1: 0,
+            y1: 30 + 50 * wireIndex,
+            offsetLeft: elWireRect.left + elWireRect.width,
+            offsetTop: elWireRect.top - 50 * wireIndex,
+          };
+        },
+        findCorrectWire: wire => {
+          return state.correctWires.findIndex(
+            correctWire => correctWire.label === wire.label
+          );
+        },
+      };
+
+      onMounted(() => {
+        window.addEventListener("mousemove", methods.handleMouseMove);
+        state.userWires = shuffle(WIRE_OPTIONS);
+      });
+
+      onUnmounted(() =>
+        window.removeEventListener("mousemove", methods.handleMouseMove)
+      );
+
+      watch(
+        () => state.userWins,
+        currentStatus => {
+          if (currentStatus) {
+            emit("mini-game-won", "wire-game");
+          }
         }
+      );
 
-        this.drawWire.display = false;
-      },
-      registerMatchColor(wire) {
-        this.userSelection.matchedWire = wire.label;
-      },
-      registerWireColor($event, wire) {
-        this.userSelection.selectedWire = wire.label;
-
-        const wireIndex = this.userWires.findIndex(
-          userWire => userWire === wire
-        );
-        const elWireRect = $event.target.getBoundingClientRect();
-
-        this.drawWire = {
-          display: true,
-          label: wire.label,
-          stroke: wire.label,
-          x1: 0,
-          y1: 30 + 50 * wireIndex,
-          offsetLeft: elWireRect.left + elWireRect.width,
-          offsetTop: elWireRect.top - 50 * wireIndex,
-        };
-      },
-      findCorrectWire(wire) {
-        return this.correctWires.findIndex(
-          correctWire => correctWire.label === wire.label
-        );
-      },
+      return {
+        ...toRefs(state),
+        ...methods,
+      };
     },
   };
 </script>
